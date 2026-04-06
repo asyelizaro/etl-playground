@@ -5,7 +5,6 @@
 [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
 
 
-Ручной 
 Предварительно необходимо разархивировать `olist_datasets.zip` ->`shared/data/`
 
 ```powershell

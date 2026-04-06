@@ -1,7 +1,10 @@
 # etl-playground
-# E-commerce data for practicing ETL from source to analytics
+**E-commerce data for practicing ETL from source to analytics**
+Практический проект для изучения полного ETL пайплайна
 
-olist_datasets.zip https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce/data
+Используемый датасет: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce/data
+
+
 
 Предварительно необходимо разахивировать olist_datasets.zip в директорию shared\data
 

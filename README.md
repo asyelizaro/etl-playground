@@ -5,7 +5,7 @@
 Используемый датасет: https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce/data
 
 
-
+Ручной 
 Предварительно необходимо разахивировать olist_datasets.zip в директорию shared\data
 
 1. Запуск DB:
@@ -33,7 +33,6 @@ docker exec -it postgres_olist_shared psql -U olist -d olist_source -c "\dt"
 4. Импорт в БД из .csv поочередно:
 ```sql
 \copy olist_customers_dataset FROM '/tmp/olist_customers_dataset.csv' WITH (FORMAT csv, HEADER);
-
 
 \copy olist_orders_dataset FROM '/tmp/olist_orders_dataset.csv' WITH (FORMAT csv, HEADER);
 

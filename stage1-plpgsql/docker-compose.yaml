@@ -120,14 +120,6 @@ services:
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
 
-  airbyte:
-    image: airbyte/bootloader:0.50.40
-    restart: always
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./airbyte_data:/data
 
 volumes:
   postgres_star_db_volume:
-  airbyte_data:

@@ -1,0 +1,11 @@
+# Airbyte
+airbyte_standalone/
+
+# Docker
+**/postgres_data/
+**/airbyte_data/
+*.log
+
+# IDE
+.vscode/
+.idea/

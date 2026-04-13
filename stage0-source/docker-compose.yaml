@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  postgres-stage0:
+    image: postgres:15
+    container_name: pg-stage0
+    environment:
+      POSTGRES_DB: chinook
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      # монтирование Chinook_PostgreSql.sql для инициализации бд при первом запуске контейнера
+      - ./Chinook_PostgreSql.sql:/docker-entrypoint-initdb.d/Chinook_PostgreSql.sql
+    restart: unless-stopped
+    networks:
+      - airflow_network
+
+networks:
+  airflow_network:
+    driver: bridge

@@ -1,9 +1,11 @@
 version: '3.8'
+
 services:
   postgres_star_model:
     image: postgres:15
     container_name: postgres_star_model
     environment:
+      # База для продуктовых данных (star-схема)
       POSTGRES_DB: star_model
       POSTGRES_USER: star
       POSTGRES_PASSWORD: star
@@ -14,6 +16,21 @@ services:
     networks:
       - airflow_network
 
+  # База для метаданных Airflow (внутри того же контейнера, но отдельная БД)
+  postgres_airflow:
+    image: postgres:15
+    container_name: postgres_airflow
+    environment:
+      POSTGRES_DB: airflow_db
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./postgres_data_airflow:/var/lib/postgresql/data
+    networks:
+      - airflow_network
+
   airflow-init:
     image: apache/airflow:2.10.0
     container_name: airflow_init
@@ -21,7 +38,8 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://star:star@postgres_star_model:5432/star_model
+      # Airflow использует свою БД airflow_db
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
       AIRFLOW__CORE__FERNET_KEY: 2eCxJJrMGa9g5AKd0g7PTb4KGQ6FQJszTFKbqXX5u2M=
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
@@ -32,7 +50,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
     depends_on:
-      - postgres_star_model
+      - postgres_airflow
     command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
     restart: 'no'
     networks:
@@ -45,7 +63,7 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://star:star@postgres_star_model:5432/star_model
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
       AIRFLOW__CORE__FERNET_KEY: 2eCxJJrMGa9g5AKd0g7PTb4KGQ6FQJszTFKbqXX5u2M=
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
@@ -71,7 +89,7 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://star:star@postgres_star_model:5432/star_model
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
       AIRFLOW__CORE__FERNET_KEY: 2eCxJJrMGa9g5AKd0g7PTb4KGQ6FQJszTFKbqXX5u2M=
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags

@@ -5,10 +5,9 @@ services:
     image: postgres:15
     container_name: postgres_star_model
     environment:
-      # База для продуктовых данных (star-схема)
       POSTGRES_DB: star_model
-      POSTGRES_USER: star
-      POSTGRES_PASSWORD: star
+      POSTGRES_USER: ${POSTGRES_STAR_USER:-star}
+      POSTGRES_PASSWORD: ${POSTGRES_STAR_PASSWORD:-star}
     ports:
       - "5433:5432"
     volumes:
@@ -16,14 +15,13 @@ services:
     networks:
       - airflow_network
 
-  # База для метаданных Airflow (внутри того же контейнера, но отдельная БД)
   postgres_airflow:
     image: postgres:15
     container_name: postgres_airflow
     environment:
       POSTGRES_DB: airflow_db
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
+      POSTGRES_USER: ${POSTGRES_AIRFLOW_USER:-airflow}
+      POSTGRES_PASSWORD: ${POSTGRES_AIRFLOW_PASSWORD:-airflow}
     ports:
       - "5434:5432"
     volumes:
@@ -38,9 +36,8 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
-      # Airflow использует свою БД airflow_db
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
-      AIRFLOW__CORE__FERNET_KEY: 2eCxJJrMGa9g5AKd0g7PTb4KGQ6FQJszTFKbqXX5u2M=
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
@@ -64,15 +61,11 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
-      AIRFLOW__CORE__FERNET_KEY: 2eCxJJrMGa9g5AKd0g7PTb4KGQ6FQJszTFKbqXX5u2M=
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./plugins:/opt/airflow/plugins
     ports:
       - "8080:8080"
     command: webserver
@@ -90,15 +83,11 @@ services:
     environment:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
-      AIRFLOW__CORE__FERNET_KEY: 2eCxJJrMGa9g5AKd0g7PTb4KGQ6FQJszTFKbqXX5u2M=
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
-    volumes:
-      - ./dags:/opt/airflow/dags
-      - ./logs:/opt/airflow/logs
-      - ./plugins:/opt/airflow/plugins
     command: scheduler
     depends_on:
       - airflow-init

@@ -38,3 +38,49 @@ BEGIN
         i.invoice_date, i.invoice_id, il.invoice_line_id;
 
 END $$;
+
+CREATE OR REPLACE FUNCTION fn_fact_album()
+RETURNS NULL
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    INSERT INTO dds.dim_album (
+        album_id,
+		title,
+		artist_id,
+        created_at
+    )
+    SELECT
+		album_id,
+		title,
+		artist_id,
+        NOW() AS created_at
+    FROM
+    	stage.album al 
+    ORDER BY
+        album_id;
+
+END $$;
+
+CREATE OR REPLACE FUNCTION fn_fact_artist()
+RETURNS NULL
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    INSERT INTO dds.dim_artist (
+		artist_id int4 NOT NULL,
+		"name" varchar(120) NULL,
+        created_at
+    )
+    SELECT
+		artist_id,
+		name,
+        NOW() AS created_at
+    FROM
+    	stage.artist al
+    ORDER BY
+        artist_id;
+
+END $$;

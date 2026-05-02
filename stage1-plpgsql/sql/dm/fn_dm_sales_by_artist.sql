@@ -30,7 +30,6 @@ BEGIN
     GROUP BY
         1, 2, 3;
 
-
-
+    ANALYZE data_mart.t_dm_sales_by_artist;
 
 END $$;

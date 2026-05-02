@@ -7,6 +7,7 @@ BEGIN
     INSERT INTO dds.t_fact_sales (
         sale_id,
         invoice_id,
+        employee_id,
         customer_id,
         track_id,
         artist_id,
@@ -20,6 +21,7 @@ BEGIN
     SELECT
         il.invoice_line_id AS sale_id,
         i.invoice_id,
+        c.support_rep_id AS employee_id,
         i.customer_id,
         il.track_id,
         al.artist_id,
@@ -31,11 +33,10 @@ BEGIN
         NOW() AS created_at
     FROM
         stage.invoice_line il
-    JOIN stage.invoice i ON il.invoice_id = i.invoice_id
-    JOIN stage.track t ON il.track_id = t.track_id
+    JOIN stage.invoice i ON i.invoice_id = il.invoice_id
+    JOIN stage.track t ON t.track_id = il.track_id
     JOIN stage.album al ON al.album_id = t.album_id
-    ORDER BY
-        i.invoice_date, i.invoice_id, il.invoice_line_id;
+    JOIN stage.customer c ON c.customer_id = i.customer_id;
 
     ANALYZE dds.t_fact_sales;
     

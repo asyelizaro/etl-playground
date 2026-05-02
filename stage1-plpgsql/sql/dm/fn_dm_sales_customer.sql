@@ -38,4 +38,6 @@ BEGIN
     GROUP BY
         1,2,3,4,5;
 
+    ANALYZE data_mart.t_dm_sales_customer;
+
 END $$;

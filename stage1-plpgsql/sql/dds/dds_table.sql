@@ -21,6 +21,7 @@ DROP TABLE IF EXISTS dds.t_dim_date CASCADE;
 CREATE TABLE IF NOT EXISTS dds.t_fact_sales (
     sale_id BIGINT PRIMARY KEY,
     invoice_id INTEGER NOT NULL,
+    employee_id INTEGER NOT NULL,
     customer_id INTEGER NOT NULL,
     track_id BIGINT NOT NULL,
     artist_id INTEGER NOT NULL,

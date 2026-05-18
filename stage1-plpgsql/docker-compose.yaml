@@ -46,6 +46,7 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
+      - ./sql:/opt/airflow/sql
     depends_on:
       - postgres_airflow
     command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
@@ -74,6 +75,11 @@ services:
     restart: unless-stopped
     networks:
       - airflow_network
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./sql:/opt/airflow/sql
 
   airflow-scheduler:
     image: apache/airflow:2.10.0
@@ -94,6 +100,11 @@ services:
     restart: unless-stopped
     networks:
       - airflow_network
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./sql:/opt/airflow/sql
 
 networks:
   airflow_network:

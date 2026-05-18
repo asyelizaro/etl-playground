@@ -2,7 +2,7 @@
 # Docker
 **/postgres_data/
 *.log
-**postgres_data_airflow/
+**/postgres_data_airflow/
 
 # IDE
 .vscode/

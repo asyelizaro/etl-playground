@@ -67,6 +67,8 @@ services:
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+      AIRFLOW__CORE__TEST_CONNECTION: "True"
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
     ports:
       - "8080:8080"
     command: webserver

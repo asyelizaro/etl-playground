@@ -8,7 +8,7 @@ with DAG(
     schedule_interval=None,
     catchup=False,
     template_searchpath=["/opt/airflow/sql"],
-    tags=["stage1", "etl", "chinook"],
+    tags=["stage1", "etl", "chinook", "plpgsql"],
 ) as dag:
 
     # 1. Setup stage - подготовка таблицы stage
@@ -108,33 +108,51 @@ with DAG(
         sql="dm/fn_dm_sales_customer.sql",
     )
 
-    # Определение зависимостей
-    (
-        setup_stage
-        >> create_dds_tables
-        >> init_functions
-        >> [
-            load_dim_customer,
-            load_dim_date,
-            load_dim_employee,
-            load_dim_genre,
-            load_dim_track,
-        ]
-    )
+# Определение зависимостей
 
-    (
-        [
-            load_dim_customer,
-            load_dim_date,
-            load_dim_employee,
-            load_dim_genre,
-            load_dim_track,
-        ]
-        >> [load_fact_album, load_fact_artist, load_fact_sales]
-    )
+(
+    setup_stage
+    >> create_dds_tables
+    >> init_functions
+    >> [
+        load_dim_customer,
+        load_dim_date,
+        load_dim_employee,
+        load_dim_genre,
+        load_dim_track,
+    ]
+)
 
-    (
-        [load_fact_album, load_fact_artist, load_fact_sales]
-        >> create_dm_tables
-        >> [dm_sales_by_artist, dm_sales_by_employee, dm_sales_customer]
-    )
+# Загрузка измерений -> факты
+[
+    load_dim_customer,
+    load_dim_date,
+    load_dim_employee,
+    load_dim_genre,
+    load_dim_track,
+] >> load_fact_album
+[
+    load_dim_customer,
+    load_dim_date,
+    load_dim_employee,
+    load_dim_genre,
+    load_dim_track,
+] >> load_fact_artist
+[
+    load_dim_customer,
+    load_dim_date,
+    load_dim_employee,
+    load_dim_genre,
+    load_dim_track,
+] >> load_fact_sales
+
+# Загрузка фактов -> витрины
+[
+    load_fact_album,
+    load_fact_artist,
+    load_fact_sales,
+] >> create_dm_tables
+
+create_dm_tables >> dm_sales_by_artist
+create_dm_tables >> dm_sales_by_employee
+create_dm_tables >> dm_sales_customer

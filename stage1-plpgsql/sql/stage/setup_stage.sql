@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS postgres_fdw;
 DROP SERVER IF EXISTS stage0_source CASCADE;
 
 CREATE SERVER stage0_source FOREIGN DATA WRAPPER postgres_fdw OPTIONS (
-    host 'host.docker.internal',
+    host 'postgres-stage0',
     port '5432',
     dbname 'chinook'
 );
@@ -17,9 +17,6 @@ CREATE USER MAPPING FOR CURRENT_USER SERVER stage0_source OPTIONS (
 );
 
 CREATE SCHEMA IF NOT EXISTS stage;
-
--- Использование схемы stage как основную схему для foreign table
-SET search_path TO stage;
 
 -- 4. загрузка таблиц
 CREATE FOREIGN

@@ -1,5 +1,8 @@
+-- 0. создание схемы
+CREATE SCHEMA IF NOT EXISTS stage;
+
 -- 1. установка расширения
-CREATE EXTENSION IF NOT EXISTS postgres_fdw;
+CREATE EXTENSION IF NOT EXISTS postgres_fdw SCHEMA stage;
 
 -- 2. foreign server
 DROP SERVER IF EXISTS stage0_source CASCADE;
@@ -15,8 +18,6 @@ CREATE USER MAPPING FOR CURRENT_USER SERVER stage0_source OPTIONS (
     user 'postgres',
     password 'postgres'
 );
-
-CREATE SCHEMA IF NOT EXISTS stage;
 
 -- 4. загрузка таблиц
 CREATE FOREIGN

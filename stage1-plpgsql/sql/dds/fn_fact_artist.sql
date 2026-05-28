@@ -5,8 +5,8 @@ AS $$
 BEGIN
 
     INSERT INTO dds.t_dim_artist (
-		artist_id int4 NOT NULL,
-		"name" varchar(120) NULL,
+		artist_id,
+		"name",
         created_at
     )
     SELECT

@@ -19,4 +19,5 @@ services:
 
 networks:
   airflow_network:
-    driver: bridge
+    external: true
+    name: stage0-source_airflow_network

@@ -20,12 +20,12 @@ BEGIN
         SUM(fct.total_amount) AS revenue,
         SUM(fct.quantity) AS quantity
     FROM
-        dds.fact_sales AS fct
-    JOIN dds.dim_track AS t
+        dds.t_fact_sales AS fct
+    JOIN dds.t_dim_track AS t
         ON t.track_id = fct.track_id
-    JOIN dds.dim_genre AS g
+    JOIN dds.t_dim_genre AS g
         ON g.genre_id = t.genre_id
-    JOIN dds.dim_artist AS a
+    JOIN dds.t_dim_artist AS a
         ON a.artist_id = fct.artist_id
     GROUP BY
         1, 2, 3;

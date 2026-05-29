@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS data_mart.t_dm_sales_by_artist CASCADE;
 
 DROP TABLE IF EXISTS data_mart.t_dm_sales_by_employee CASCADE;
 
-CREATE TABLE IF NOT EXISTS data_mart.t_dm_sales_customer (
+CREATE TABLE IF NOT EXISTS data_mart.t_dm_sales_customers (
     customer_id int4,
     full_name text,
     country varchar(80),

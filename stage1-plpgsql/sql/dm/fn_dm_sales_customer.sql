@@ -4,14 +4,14 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
-    INSERT INTO data_mart.t_dm_sales_customer (
+    INSERT INTO data_mart.t_dm_sales_customers (
         customer_id,
         full_name,
         country,
         first_purchase,
         last_purchase,
         revenue,
-        quanity
+        quantity
     )
     SELECT
         customer_id,
@@ -20,7 +20,7 @@ BEGIN
         first_purchase,
         last_purchase,
         SUM(total_amount) AS revenue,
-        SUM(quantity) AS quanity
+        SUM(quantity) AS quantity
     FROM (
         SELECT
             fct.customer_id,
@@ -31,13 +31,13 @@ BEGIN
             MAX(invoice_date) OVER (PARTITION BY fct.customer_id) AS last_purchase,
             total_amount,
             quantity
-        FROM dds.fact_sales AS fct
-        JOIN dds.dim_customer AS c
+        FROM dds.t_fact_sales AS fct
+        JOIN dds.t_dim_customer AS c
             ON c.customer_id = fct.customer_id
     ) AS t 
     GROUP BY
         1,2,3,4,5;
 
-    ANALYZE data_mart.t_dm_sales_customer;
+    ANALYZE data_mart.t_dm_sales_customers;
 
 END $$;

@@ -40,17 +40,17 @@ with DAG(
         ]
 
         run_dim = [
-            PostgresOperator(task_id="run_fn_dim_artist", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_artist();", retries=2, retry_delay=timedelta(seconds=15)),
-            PostgresOperator(task_id="run_fn_dim_genre", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_genre();", retries=2, retry_delay=timedelta(seconds=15)),
-            PostgresOperator(task_id="run_fn_dim_album", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_album();", retries=2, retry_delay=timedelta(seconds=15)),
-            PostgresOperator(task_id="run_fn_dim_track", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_track();", retries=2, retry_delay=timedelta(seconds=15)),
-            PostgresOperator(task_id="run_fn_dim_customer", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_customer();", retries=2, retry_delay=timedelta(seconds=15)),
-            PostgresOperator(task_id="run_fn_dim_employee", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_employee();", retries=2, retry_delay=timedelta(seconds=15)),
-            PostgresOperator(task_id="run_fn_dim_date", postgres_conn_id="postgres_star_model", sql="SELECT fn_dim_date();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dim_customer", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_dim_customer();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dim_date", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_dim_date();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dim_employee", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_dim_employee();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dim_genre", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_dim_genre();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dim_track", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_dim_track();", retries=2, retry_delay=timedelta(seconds=15)),
         ]
 
         run_facts = [
-            PostgresOperator(task_id="run_fn_fact_sales", postgres_conn_id="postgres_star_model", sql="SELECT fn_fact_sales();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_fact_album", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_fact_album();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_fact_artist", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_fact_artist();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_fact_sales", postgres_conn_id="postgres_star_model", sql="SELECT dds.fn_fact_sales();", retries=2, retry_delay=timedelta(seconds=15)),
         ]
 
         dds_table >> dds_fn_tasks
@@ -73,8 +73,17 @@ with DAG(
             PostgresOperator(task_id="fn_dm_sales_customer", postgres_conn_id="postgres_star_model", sql="dm/fn_dm_sales_customer.sql"),
         ]
 
+        run_dm = [
+            PostgresOperator(task_id="run_fn_dm_sales_by_artist", postgres_conn_id="postgres_star_model", sql="SELECT data_mart.fn_dm_sales_by_artist();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dm_sales_by_employee", postgres_conn_id="postgres_star_model", sql="SELECT data_mart.fn_dm_sales_by_employee();", retries=2, retry_delay=timedelta(seconds=15)),
+            PostgresOperator(task_id="run_fn_dm_sales_customer", postgres_conn_id="postgres_star_model", sql="SELECT data_mart.fn_dm_sales_customer();", retries=2, retry_delay=timedelta(seconds=15)),
+        ]
+
         dm_table >> dm_fn_tasks
 
-        for 
+        for create_task in dm_fn_tasks:
+            create_task >> run_dm
+
+
 
     stage_layer >> dds_layer >> dm_layer

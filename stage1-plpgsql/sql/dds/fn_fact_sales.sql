@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_fact_sales;
+    
     INSERT INTO dds.t_fact_sales (
         sale_id,
         invoice_id,

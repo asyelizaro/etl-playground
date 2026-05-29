@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE data_mart.t_dm_sales_by_artist;
+    
     INSERT INTO data_mart.t_dm_sales_by_artist (
         invoice_date,
         artist_name,

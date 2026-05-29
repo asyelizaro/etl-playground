@@ -1,22 +1,6 @@
 -- содание схемы и таблиц детального слоя
 CREATE SCHEMA IF NOT EXISTS dds;
 
-DROP TABLE IF EXISTS dds.t_fact_sales CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_album CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_artist CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_track CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_customer CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_genre CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_employee CASCADE;
-
-DROP TABLE IF EXISTS dds.t_dim_date CASCADE;
-
 -- таблица фактов
 CREATE TABLE IF NOT EXISTS dds.t_fact_sales (
     sale_id BIGINT PRIMARY KEY,

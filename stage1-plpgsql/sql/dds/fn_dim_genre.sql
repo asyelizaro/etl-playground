@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_genre;
+    
     INSERT INTO dds.t_dim_genre (
         genre_id,
         "name",

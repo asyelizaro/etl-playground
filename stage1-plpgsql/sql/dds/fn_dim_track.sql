@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_track;
+    
     INSERT INTO dds.t_dim_track (
         track_id,
         "name",

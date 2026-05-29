@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_date;
+    
     INSERT INTO dds.t_dim_date (
         date_key,
         "date",

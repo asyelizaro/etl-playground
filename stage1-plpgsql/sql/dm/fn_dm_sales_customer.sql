@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE data_mart.t_dm_sales_customers;
+    
     INSERT INTO data_mart.t_dm_sales_customers (
         customer_id,
         full_name,

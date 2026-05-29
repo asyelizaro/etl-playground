@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_employee;
+    
     INSERT INTO dds.t_dim_employee (
         employee_id,
         last_name,

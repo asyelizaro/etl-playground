@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_album;
+    
     INSERT INTO dds.t_dim_album (
         album_id,
 		title,

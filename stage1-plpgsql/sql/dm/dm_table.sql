@@ -1,12 +1,6 @@
 -- содание схемы и таблиц data_mart слоя
 CREATE SCHEMA IF NOT EXISTS data_mart;
 
-DROP TABLE IF EXISTS data_mart.t_dm_sales_customer CASCADE;
-
-DROP TABLE IF EXISTS data_mart.t_dm_sales_by_artist CASCADE;
-
-DROP TABLE IF EXISTS data_mart.t_dm_sales_by_employee CASCADE;
-
 CREATE TABLE IF NOT EXISTS data_mart.t_dm_sales_customers (
     customer_id int4,
     full_name text,

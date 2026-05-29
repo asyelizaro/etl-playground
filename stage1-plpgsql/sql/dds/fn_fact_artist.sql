@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_artist;
+    
     INSERT INTO dds.t_dim_artist (
 		artist_id,
 		"name",

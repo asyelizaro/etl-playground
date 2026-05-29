@@ -4,6 +4,8 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
 
+    TRUNCATE TABLE dds.t_dim_customer;
+
     INSERT INTO dds.t_dim_customer (
         customer_id,
         first_name,

@@ -2,30 +2,6 @@ version: '3.8'
 
 services:
 
-  airbyte-db:
-    image: postgres:15
-    container_name: airbyte-db
-    environment:
-      POSTGRES_DB: airbyte
-      POSTGRES_USER: airbyte
-      POSTGRES_PASSWORD: airbyte
-    ports:
-      - "5435:5432"
-
-  airbyte:
-    image: airbyte/airbyte:latest
-    container_name: airbyte
-    ports:
-      - "8000:8000"
-    depends_on:
-      - airbyte-db
-    environment:
-      DATABASE_HOST: airbyte-db
-      DATABASE_PORT: 5432
-      DATABASE_USER: airbyte
-      DATABASE_PASSWORD: airbyte
-      DATABASE_DB: airbyte
-
   minio:
     image: minio/minio
     container_name: minio

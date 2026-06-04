@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio123}
+    command: server /data --console-address ":9001"
+
+  postgres_airflow:
+    image: postgres:15
+    container_name: postgres_airflow
+    environment:
+      POSTGRES_DB: airflow_db
+      POSTGRES_USER: ${POSTGRES_AIRFLOW_USER:-airflow}
+      POSTGRES_PASSWORD: ${POSTGRES_AIRFLOW_PASSWORD:-airflow}
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./postgres_data_airflow:/var/lib/postgresql/data
+    networks:
+      - airflow_network
+
+  airflow-init:
+    image: apache/airflow:2.10.0
+    container_name: airflow_init
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
+      AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./sql:/opt/airflow/sql
+    depends_on:
+      - postgres_airflow
+    command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
+    restart: 'no'
+    networks:
+      - airflow_network
+
+  airflow-webserver:
+    image: apache/airflow:2.10.0
+    container_name: airflow_webserver
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
+      AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+      AIRFLOW__CORE__TEST_CONNECTION: "True"
+      AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "True"
+    ports:
+      - "8080:8080"
+    command: webserver
+    depends_on:
+      - airflow-init
+    restart: unless-stopped
+    networks:
+      - airflow_network
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./sql:/opt/airflow/sql
+
+  airflow-scheduler:
+    image: apache/airflow:2.10.0
+    container_name: airflow_scheduler
+    env_file:
+      - .env
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
+      AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
+    command: scheduler
+    depends_on:
+      - airflow-init
+    restart: unless-stopped
+    networks:
+      - airflow_network
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./sql:/opt/airflow/sql
+
+networks:
+  airflow_network:
+    driver: bridge
+    external: true
+    name: stage0-source_airflow_network

@@ -19,3 +19,13 @@
 ```bash
 bash stage1-plpgsql/start-stage1.sh
 ```
+
+## Структура s3 для stage2
+chinook-lake/
+  raw/
+    chinook/
+      customers.parquet
+      invoices.parquet
+  staging/
+  dv/
+  mart/

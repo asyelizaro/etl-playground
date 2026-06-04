@@ -1,6 +1,31 @@
 version: '3.8'
 
 services:
+
+  airbyte-db:
+    image: postgres:15
+    container_name: airbyte-db
+    environment:
+      POSTGRES_DB: airbyte
+      POSTGRES_USER: airbyte
+      POSTGRES_PASSWORD: airbyte
+    ports:
+      - "5435:5432"
+
+  airbyte:
+    image: airbyte/airbyte:latest
+    container_name: airbyte
+    ports:
+      - "8000:8000"
+    depends_on:
+      - airbyte-db
+    environment:
+      DATABASE_HOST: airbyte-db
+      DATABASE_PORT: 5432
+      DATABASE_USER: airbyte
+      DATABASE_PASSWORD: airbyte
+      DATABASE_DB: airbyte
+
   minio:
     image: minio/minio
     container_name: minio
@@ -43,7 +68,6 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./sql:/opt/airflow/sql
     depends_on:
       - postgres_airflow
     command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
@@ -78,7 +102,6 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./sql:/opt/airflow/sql
 
   airflow-scheduler:
     image: apache/airflow:2.10.0
@@ -103,7 +126,6 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
-      - ./sql:/opt/airflow/sql
 
 networks:
   airflow_network:

@@ -29,3 +29,8 @@ chinook-lake/
   staging/
   dv/
   mart/
+
+## Запуск stage2
+```bash
+pip install -r requirements.txt
+```

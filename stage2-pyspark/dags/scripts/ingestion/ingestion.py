@@ -17,7 +17,7 @@ CHINOOK_CONFIG = {
 }
 
 MINIO_CONFIG = {
-    'endpoint': 'localhost:9000',
+    'endpoint': 'http://localhost:9000',
     'access_key': 'minioadmin',
     'secret_key': 'minioadmin',
     'bucket': 'chinook_raw',  # bucket для сырых данных

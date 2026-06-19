@@ -4,24 +4,25 @@ import boto3
 from io import BytesIO
 from datetime import datetime
 import logging
+import os
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 CHINOOK_CONFIG = {
-    'host': 'localhost',
-    'port': 5432,
-    'database': 'chinook',
-    'user': 'postgres',
-    'password': 'postgres'
+    'host': os.getenv('POSTGRES_CHINOOK_HOST', 'postgres-stage0'),
+    'port': int(os.getenv('POSTGRES_CHINOOK_PORT', 5432)),
+    'database': os.getenv('POSTGRES_CHINOOK_DB', 'chinook'),
+    'user': os.getenv('POSTGRES_CHINOOK_USER', 'postgres'),
+    'password': os.getenv('POSTGRES_CHINOOK_PASSWORD', 'postgres')
 }
 
 MINIO_CONFIG = {
-    'endpoint': 'http://localhost:9000',
-    'access_key': 'minioadmin',
-    'secret_key': 'minioadmin',
-    'bucket': 'chinook_raw',  # bucket для сырых данных
-    'secure': False
+    'endpoint': os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
+    'access_key': os.getenv('MINIO_ACCESS_KEY', 'minioadmin'),
+    'secret_key': os.getenv('MINIO_SECRET_KEY', 'minioadmin'),
+    'bucket': os.getenv('MINIO_BUCKET', 'chinook_raw'),  # bucket для сырых данных
+    'secure': os.getenv('MINIO_SECURE', 'False').lower() == 'true'
 }
 
 TABLES = [

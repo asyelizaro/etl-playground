@@ -22,7 +22,7 @@ MINIO_CONFIG = {
     'endpoint': os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
     'access_key': os.getenv('MINIO_ACCESS_KEY', 'minioadmin'),
     'secret_key': os.getenv('MINIO_SECRET_KEY', 'minioadmin'),
-    'bucket': os.getenv('MINIO_BUCKET', 'chinook_raw'),  # bucket для сырых данных
+    'bucket': os.getenv('MINIO_BUCKET', 'chinook-raw'),  # bucket для сырых данных
     'secure': os.getenv('MINIO_SECURE', 'False').lower() == 'true'
 }
 
@@ -38,7 +38,10 @@ def get_minio_client():
         aws_secret_access_key=MINIO_CONFIG['secret_key'],
         region_name='us-east-1',
         use_ssl=MINIO_CONFIG['secure'],
-        verify=False
+        verify=False,
+        config=boto3.session.Config(
+            s3={"addressing_style": "path"}
+        )
     )
 
 #Подключение к БД Chinook
@@ -62,9 +65,13 @@ def extract_table_to_parquet(engine, table_name):
 def upload_to_minio(s3_client, buffer, table_name):
     try:
 
+        logger.info(f"BUCKET USED: {MINIO_CONFIG['bucket']}")
+
+        ensure_bucket(s3_client, MINIO_CONFIG['bucket'])
+
         now = datetime.now(timezone.utc)
         date = now.strftime('%Y-%m-%d')
-        
+
         s3_client.upload_fileobj(
             buffer,
             MINIO_CONFIG['bucket'],
@@ -82,52 +89,51 @@ def upload_to_minio(s3_client, buffer, table_name):
         logger.error(f"Error uploading {table_name}: {e}")
         raise
 
-
+def ensure_bucket(client, bucket_name):
+    try:
+        client.head_bucket(Bucket=bucket_name)
+        return
+    except ClientError as e:
+        if e.response["Error"]["Code"] in ["404", "NoSuchBucket", "NotFound"]:
+            client.create_bucket(Bucket=bucket_name)
+        else:
+            raise
 
 def main():
     logger.info("Starting Chinook Ingestion Pipeline")
-    logger.info(f"Chinook config: host={CHINOOK_CONFIG['host']}, db={CHINOOK_CONFIG['database']}")
-    logger.info(f"MinIO config: endpoint={MINIO_CONFIG['endpoint']}, bucket={MINIO_CONFIG['bucket']}")
-    
-    # Создаваем коннекты
+
+    client = get_minio_client()
     engine = get_chinook_engine()
-    s3_client = get_minio_client()
-    
-    # Проверяем, что bucket существует, если нет - создаем
-    try:
-        s3_client.head_bucket(Bucket=MINIO_CONFIG['bucket'])
-        logger.info(f"Bucket {MINIO_CONFIG['bucket']} exists")
-    except ClientError as e:
-        if e.response['Error']['Code'] == '404':
-            logger.info(f"Creating bucket {MINIO_CONFIG['bucket']}...")
-            s3_client.create_bucket(Bucket=MINIO_CONFIG['bucket'])
-        else:
-            raise
-    
-    # Обрабатываем каждую таблицу
+
+    ensure_bucket(client, MINIO_CONFIG["bucket"])
+    logger.info(f"Bucket ready: {MINIO_CONFIG['bucket']}")
+
     stats = {}
+
     for table in TABLES:
         try:
             buffer, df = extract_table_to_parquet(engine, table)
-            upload_to_minio(s3_client, buffer, table)
+            upload_to_minio(client, buffer, table)
+
             stats[table] = {
                 'rows': len(df),
                 'columns': len(df.columns),
                 'status': 'success'
             }
-            logger.info(f"Success! Rows: {len(df)}, Columns: {len(df.columns)}")
+
+            logger.info(f"{table}: OK ({len(df)} rows)")
+
         except Exception as e:
-            logger.error(f"Error! processing {table}: {e}")
+            logger.error(f"{table}: FAILED - {e}")
             stats[table] = {'status': 'error', 'error': str(e)}
-    
-    # Финальная статистика
-    logger.info("\nIngestion Summary")
-    for table, stat in stats.items():
-        logger.info(f"{table}: {stat}")
-    
-    success_count = sum(1 for s in stats.values() if s.get('status') == 'success')
-    logger.info(f"\nTotal: {success_count}/{len(TABLES)} tables loaded successfully")
-    logger.info("Pipeline Completed")
+
+    logger.info("Pipeline Summary:")
+    logger.info(stats)
+
+    success = sum(1 for s in stats.values() if s.get("status") == "success")
+    logger.info(f"Success: {success}/{len(TABLES)}")
+
+    logger.info("Done")
 
 if __name__ == "__main__":
     main()

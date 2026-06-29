@@ -48,9 +48,9 @@ services:
       POSTGRES_CHINOOK_USER: postgres
       POSTGRES_CHINOOK_PASSWORD: postgres
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_BUCKET: chinook_raw
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minio}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minio123}
+      MINIO_BUCKET: chinook-raw
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
@@ -83,9 +83,9 @@ services:
       POSTGRES_CHINOOK_USER: postgres
       POSTGRES_CHINOOK_PASSWORD: postgres
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_BUCKET: chinook_raw
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minio}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minio123}
+      MINIO_BUCKET: chinook-raw
     ports:
       - "8080:8080"
     command: webserver
@@ -118,9 +118,9 @@ services:
       POSTGRES_CHINOOK_USER: postgres
       POSTGRES_CHINOOK_PASSWORD: postgres
       MINIO_ENDPOINT: http://minio:9000
-      MINIO_ACCESS_KEY: minioadmin
-      MINIO_SECRET_KEY: minioadmin
-      MINIO_BUCKET: chinook_raw
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER:-minio}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minio123}
+      MINIO_BUCKET: chinook-raw
     command: scheduler
     depends_on:
       - airflow-init

@@ -12,7 +12,7 @@
   Star Schema (DDS) и аналитические витрины (DM)
 
 - **stage2 (planned)** — DataLake на S3 (MinIO) с PySpark + Airflow  
-  Data Vault 2.0 (Silver layer) и аналитические витрины (DM) на ClickHouse
+  Data Vault 2.0 и аналитические витрины (DM) на ClickHouse
 
 ## Запуск stage1
 
@@ -34,7 +34,6 @@ chinook-lake/
     dt=YYYY-MM-DD/
       playlist.parquet
   ...
-  staging/
   dv/
 ```
 ## Запуск stage2

@@ -22,6 +22,7 @@ bash stage1-plpgsql/start-stage1.sh
 
 ## Структура s3 для stage2
 Данные загружаются в бакет по таблицам и датам в формате, который использует `ingestion.py`:
+
 chinook-lake/
   artist/
     dt=YYYY-MM-DD/
@@ -35,7 +36,7 @@ chinook-lake/
   ...
   staging/
   dv/
-
+``
 ## Запуск stage2
 ```bash
 pip install -r requirements.txt

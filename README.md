@@ -8,11 +8,11 @@
 
 - **stage0** — источник данных (PostgreSQL, Chinook)
 
-- **stage1** — классический DWH-подход на PL/pgSQL + Airflow  
+- **stage1** — DWH с PL/pgSQL + Airflow  
   Star Schema (DDS) и аналитические витрины (DM)
 
-- **stage2 (planned)** — ELT-пайплайн на PySpark  
-  Data Vault 2.0 с хранением в S3 (MinIO) и построением витрин в ClickHouse на тех же исходных данных
+- **stage2 (planned)** — DataLake на S3 (MinIO) с PySpark + Airflow  
+  Data Vault 2.0 (Silver layer) и аналитические витрины (DM) на ClickHouse
 
 ## Запуск stage1
 
@@ -23,12 +23,13 @@ bash stage1-plpgsql/start-stage1.sh
 ## Структура s3 для stage2
 chinook-lake/
   raw/
-    chinook/
-      customers.parquet
-      invoices.parquet
+    date-upload/
+      artist.parquet
+      genre.parquet
+      playlist.parquet
+      ...
   staging/
   dv/
-  mart/
 
 ## Запуск stage2
 ```bash

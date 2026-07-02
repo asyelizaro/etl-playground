@@ -59,9 +59,9 @@ def run_ingestion():
 
 
 with DAG(
-    dag_id='chinook_ingestion_test',
+    dag_id='dag_ingestion',
     default_args=default_args,
-    description='Test ingestion from Postgres Chinook to MinIO',
+    description='Ingestion from Postgres Chinook to MinIO',
     schedule_interval=None,  # ручной запуск
     start_date=datetime(2024, 1, 1),
     catchup=False,

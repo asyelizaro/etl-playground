@@ -6,7 +6,7 @@ import logging
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "scripts/ingestion"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "scripts", "01_ingestion"))
 
 from ingestion import (
     get_chinook_engine,

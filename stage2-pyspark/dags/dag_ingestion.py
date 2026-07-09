@@ -1,5 +1,6 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime, timedelta
 import logging
 
@@ -73,4 +74,10 @@ with DAG(
         python_callable=run_ingestion
     )
 
-    ingestion_task
+    trigger_silver = TriggerDagRunOperator(
+        task_id='trigger_silver_artist_test',
+        trigger_dag_id='silver_artist_test',
+        wait_for_completion=False,
+    )
+
+    ingestion_task >> trigger_silver

@@ -1,12 +1,13 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime, timedelta
 import logging
 
 import sys
 import os
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "scripts/ingestion"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "scripts", "01_ingestion"))
 
 from ingestion import (
     get_chinook_engine,
@@ -73,4 +74,10 @@ with DAG(
         python_callable=run_ingestion
     )
 
-    ingestion_task
+    trigger_silver = TriggerDagRunOperator(
+        task_id='trigger_silver_artist_test',
+        trigger_dag_id='silver_artist_test',
+        wait_for_completion=False,
+    )
+
+    ingestion_task >> trigger_silver

@@ -20,8 +20,8 @@ CHINOOK_CONFIG = {
 
 MINIO_CONFIG = {
     'endpoint': os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
-    'access_key': os.getenv('MINIO_ACCESS_KEY', 'minioadmin'),
-    'secret_key': os.getenv('MINIO_SECRET_KEY', 'minioadmin'),
+    'access_key': os.getenv('MINIO_ACCESS_KEY', 'minio'),
+    'secret_key': os.getenv('MINIO_SECRET_KEY', 'minio123'),
     'bucket': os.getenv('MINIO_BUCKET', 'chinook-lake'),  # bucket для сырых данных
     'secure': os.getenv('MINIO_SECURE', 'False').lower() == 'true'
 }

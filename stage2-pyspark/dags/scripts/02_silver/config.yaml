@@ -1,0 +1,16 @@
+tables:
+  - name: artist
+    handler: artist_legacy.load_artist
+    source_table: artist
+    target_table: artist_hub
+    database: silver
+    source_path: artist
+    partition_column: dt
+    business_key: artist_id
+    columns:
+      artist_id: ArtistId
+      name: Name
+    hub:
+      key_column: artist_hk
+      source_column: source
+      load_dt_column: load_dt

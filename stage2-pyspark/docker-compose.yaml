@@ -110,7 +110,7 @@ services:
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
-      AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/logs
+      AIRFLOW__CORE__LOGS_FOLDER: /opt/airflow/lo
       AIRFLOW__CORE__PLUGINS_FOLDER: /opt/airflow/plugins
       POSTGRES_CHINOOK_HOST: postgres-stage0
       POSTGRES_CHINOOK_PORT: 5432

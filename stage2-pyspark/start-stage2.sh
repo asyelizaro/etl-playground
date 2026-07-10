@@ -6,7 +6,7 @@ echo "Starting Chinook database..."
 cd ../stage0-source
 docker-compose up -d
 
-echo "Starting ETL environment..."
+echo "Starting stage2-pyspark"
 cd ../stage2-pyspark
 docker-compose up -d
 

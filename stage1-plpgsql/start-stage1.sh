@@ -3,7 +3,7 @@
 set -e
 
 echo "Starting Chinook database..."
-cd stage0-source
+cd ../stage0-source
 docker-compose up -d
 
 echo "Starting ETL environment..."

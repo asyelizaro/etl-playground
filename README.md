@@ -38,5 +38,5 @@ chinook-lake/
 ```
 ## Запуск stage2
 ```bash
-pip install -r requirements.txt
+bash stage1-plpgsql/start-stage1.sh
 ```

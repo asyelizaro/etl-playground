@@ -6,8 +6,8 @@ echo "Starting Chinook database..."
 cd ../stage0-source
 docker-compose up -d
 
-echo "Starting stage1-plpgsql"
-cd ../stage1-plpgsql
+echo "Starting stage2-pyspark"
+cd ../stage2-pyspark
 docker-compose up -d
 
 echo "Done. Open Airflow: http://localhost:8080/home"

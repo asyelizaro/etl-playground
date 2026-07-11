@@ -9,5 +9,6 @@ RUN apt-get update && \
 
 USER airflow
 
-RUN pip install --no-cache-dir \
-    pyspark==3.5.1
+COPY requirements.txt /requirements.txt
+
+RUN pip install --no-cache-dir -r /requirements.txt

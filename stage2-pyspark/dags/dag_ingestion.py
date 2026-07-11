@@ -75,8 +75,8 @@ with DAG(
     )
 
     trigger_silver = TriggerDagRunOperator(
-        task_id='trigger_silver_artist_test',
-        trigger_dag_id='silver_artist_test',
+        task_id='trigger_silver_load',
+        trigger_dag_id='silver_load',
         wait_for_completion=False,
     )
 

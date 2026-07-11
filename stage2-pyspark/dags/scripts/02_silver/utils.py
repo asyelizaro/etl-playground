@@ -22,7 +22,7 @@ def get_spark_session():
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
         .config("spark.sql.catalog.spark_catalog", "org.apache.iceberg.spark.SparkCatalog")
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")
-        .config("spark.sql.catalog.spark_catalog.warehouse", os.getenv("ICEBERG_WAREHOUSE", "/tmp/iceberg-warehouse"))
+        .config("spark.sql.catalog.spark_catalog.warehouse", os.getenv("ICEBERG_WAREHOUSE", "s3a://chinook-lake/silver"))
         .config("spark.sql.defaultCatalog", "spark_catalog")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.endpoint", minio_endpoint)

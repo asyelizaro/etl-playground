@@ -60,7 +60,7 @@ def run_ingestion():
 
 
 with DAG(
-    dag_id='dag_ingestion',
+    dag_id='ingestion_dag',
     default_args=default_args,
     description='Ingestion from Postgres Chinook to MinIO',
     schedule_interval=None,  # ручной запуск

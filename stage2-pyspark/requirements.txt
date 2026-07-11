@@ -3,5 +3,7 @@ SQLAlchemy==2.0.43
 psycopg2-binary==2.9.12
 boto3==1.42.39
 pyarrow>=15.0.0
-pyspark==4.1.2
+pyspark==3.5.1
 PyYAML>=6.0.2
+iceberg-spark-runtime-3.5_2.12==1.6.1
+hadoop-aws==3.3.4

@@ -60,7 +60,7 @@ def run_ingestion():
 
 
 with DAG(
-    dag_id='dag_ingestion',
+    dag_id='ingestion_dag',
     default_args=default_args,
     description='Ingestion from Postgres Chinook to MinIO',
     schedule_interval=None,  # ручной запуск
@@ -75,8 +75,8 @@ with DAG(
     )
 
     trigger_silver = TriggerDagRunOperator(
-        task_id='trigger_silver_artist_test',
-        trigger_dag_id='silver_artist_test',
+        task_id='trigger_silver_load',
+        trigger_dag_id='silver_load',
         wait_for_completion=False,
     )
 

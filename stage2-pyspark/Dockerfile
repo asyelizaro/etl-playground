@@ -9,5 +9,9 @@ RUN apt-get update && \
 
 USER airflow
 
-RUN pip install --no-cache-dir \
-    pyspark==3.5.1
+COPY requirements.txt /requirements.txt
+
+RUN pip install --no-cache-dir -r /requirements.txt
+
+ENV SPARK_VERSION=3.5.1
+ENV ICEBERG_SPARK_RUNTIME=org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1

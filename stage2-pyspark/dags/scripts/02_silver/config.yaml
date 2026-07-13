@@ -2,13 +2,17 @@ tables:
   - name: artist
     handler: artist.load_artist
     source_table: artist
-    target_table: artist_hub
     database: silver
     business_key: artist_id
     columns:
       artist_id: artist_id
       name: name
     hub:
+      target_table: hub_artist
       key_column: artist_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: sat_artist
       load_dt_column: load_dt
       source_column: source

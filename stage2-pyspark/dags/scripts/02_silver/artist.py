@@ -14,21 +14,7 @@ def load_artist(dt=None, table_config=None):
 
     spark = get_spark_session()
 
-    # берем настройки из config.yaml
-
-    source_table = table_config["source_table"]
     database = table_config["database"]
-    target_table = table_config["target_table"]
-    business_key = table_config["business_key"]
-    columns = table_config["columns"]
-    hub_config = table_config["hub"]
-    key_column = hub_config["key_column"]
-    load_dt_column = hub_config["load_dt_column"]
-    source_column = hub_config["source_column"]
-
-
-
-    # создаём silver дб если не создана
 
     spark.sql(
         f"""
@@ -36,20 +22,27 @@ def load_artist(dt=None, table_config=None):
         """
     )
 
+
     if dt is None:
         now = datetime.now(timezone.utc)
         dt = now.strftime("%Y-%m-%d")
 
-    # читаем Bronze
 
-    path = get_latest_partition_path(source_table, dt=dt)
+    # читаем Bronze один раз
+
+    source_table = table_config["source_table"]
+
+    path = get_latest_partition_path(
+        source_table,
+        dt=dt
+    )
 
     df = spark.read.parquet(path)
 
-    df.printSchema()
-
 
     # Bronze -> Silver
+
+    columns = table_config["columns"]
 
     select_columns = []
 
@@ -59,41 +52,114 @@ def load_artist(dt=None, table_config=None):
         )
 
 
-    df = df \
-        .select(*select_columns) \
-        .dropDuplicates([business_key])
-
-    # Data Vault поля
-
     df = (
-            df 
-            .withColumn(
-                key_column,
-                sha2(
-                    col(business_key).cast("string"),
-                    256
-                )
-            ) 
-            .withColumn(
-                load_dt_column,
-                current_timestamp()
-            ) 
-            .withColumn(
-                source_column,
-                lit("chinook")
-            )
+        df
+        .select(*select_columns)
+        .dropDuplicates(
+            [table_config["business_key"]]
         )
+    )
 
 
-    # запись Iceberg
+    # строим Hub
 
-    df.write \
-        .format("iceberg") \
-        .mode("append") \
-        .saveAsTable(f"{database}.{target_table}")
+    load_hub_artist(
+        df,
+        table_config
+    )
+
+
+    # строим Satellite
+
+    load_sat_artist(
+        df,
+        table_config
+    )
 
 
     spark.stop()
 
-
     return True
+
+
+
+def load_hub_artist(df, table_config):
+
+    database = table_config["database"]
+
+    business_key = table_config["business_key"]
+
+    hub_config = table_config["hub"]
+
+
+    df_hub = (
+        df
+        .select(
+            col(business_key)
+        )
+        .withColumn(
+            hub_config["key_column"],
+            sha2(
+                col(business_key).cast("string"),
+                256
+            )
+        )
+        .withColumn(
+            hub_config["load_dt_column"],
+            current_timestamp()
+        )
+        .withColumn(
+            hub_config["source_column"],
+            lit("chinook")
+        )
+    )
+
+
+    (
+        df_hub.write
+        .format("iceberg")
+        .mode("append")
+        .saveAsTable(
+            f"{database}.{hub_config['target_table']}"
+        )
+    )
+
+
+
+def load_sat_artist(df, table_config):
+
+    database = table_config["database"]
+
+    sat_config = table_config["sat"]
+
+    business_key = table_config["business_key"]
+
+
+    df_sat = (
+        df
+        .withColumn(
+            "artist_hk",
+            sha2(
+                col(business_key).cast("string"),
+                256
+            )
+        )
+        .withColumn(
+            sat_config["load_dt_column"],
+            current_timestamp()
+        )
+        .withColumn(
+            sat_config["source_column"],
+            lit("chinook")
+        )
+    )
+
+
+    (
+        df_sat.write
+        .format("iceberg")
+        .mode("append")
+        .saveAsTable(
+            f"{database}.{sat_config['target_table']}"
+        )
+    )

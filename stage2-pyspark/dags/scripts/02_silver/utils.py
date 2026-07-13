@@ -22,7 +22,7 @@ def get_spark_session():
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
         .config("spark.sql.catalog.spark_catalog", "org.apache.iceberg.spark.SparkCatalog")
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")
-        .config("spark.sql.catalog.spark_catalog.warehouse", os.getenv("ICEBERG_WAREHOUSE", "/tmp/iceberg-warehouse"))
+        .config("spark.sql.catalog.spark_catalog.warehouse", os.getenv("ICEBERG_WAREHOUSE", "s3a://chinook-lake"))
         .config("spark.sql.defaultCatalog", "spark_catalog")
         .config("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
         .config("spark.hadoop.fs.s3a.endpoint", minio_endpoint)
@@ -38,8 +38,7 @@ def get_spark_session():
 
 def get_latest_partition_path(table_name: str, dt: str | None = None) -> str:
     bucket = os.getenv("MINIO_BUCKET", "chinook-lake")
-    if dt:
-        return f"s3a://{bucket}/{table_name}/dt={dt}/{table_name}.parquet"
+    if dt is None:
+        dt = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    return f"s3a://{bucket}/{table_name}/dt={now}/{table_name}.parquet"
+    return f"s3a://{bucket}/bronze/{table_name}/dt={dt}/{table_name}.parquet"

@@ -38,8 +38,7 @@ def get_spark_session():
 
 def get_latest_partition_path(table_name: str, dt: str | None = None) -> str:
     bucket = os.getenv("MINIO_BUCKET", "chinook-lake")
-    if dt:
-        return f"s3a://{bucket}/{table_name}/dt={dt}/{table_name}.parquet"
+    if dt is None:
+        dt = datetime.now(timezone.utc).strftime("%Y-%m-%d")
 
-    now = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    return f"s3a://{bucket}/{table_name}/dt={now}/{table_name}.parquet"
+    return f"s3a://{bucket}/bronze/{table_name}/dt={dt}/{table_name}.parquet"

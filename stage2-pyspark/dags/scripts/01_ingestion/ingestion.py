@@ -72,19 +72,22 @@ def upload_to_minio(s3_client, buffer, table_name):
         now = datetime.now(timezone.utc)
         date = now.strftime('%Y-%m-%d')
 
+        path = f"bronze/{table_name}/dt={date}/{table_name}.parquet"
+
         s3_client.upload_fileobj(
             buffer,
-            MINIO_CONFIG['bucket'],
-            f"{table_name}/dt={date}/{table_name}.parquet",
+            MINIO_CONFIG["bucket"],
+            path,
             ExtraArgs={
-                'ContentType': 'application/octet-stream',
-                'Metadata': {
-                    'source': 'chinook-db',
-                    'extracted_at': now.isoformat()
+                "ContentType": "application/octet-stream",
+                "Metadata": {
+                    "source": "chinook-db",
+                    "extracted_at": now.isoformat()
                 }
             }
         )
-        logger.info(f"Uploaded s3://{MINIO_CONFIG['bucket']}/{table_name}/dt={date}/{table_name}.parquet")
+
+        logger.info(f"Uploaded s3://{MINIO_CONFIG['bucket']}/{path}")
     except Exception as e:
         logger.error(f"Error uploading {table_name}: {e}")
         raise

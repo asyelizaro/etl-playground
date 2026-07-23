@@ -8,11 +8,11 @@ tables:
       artist_id: artist_id
       name: name
     hub:
-      target_table: hub_artist
+      target_table: artist_hub
       key_column: artist_hk
       load_dt_column: load_dt
       source_column: source
     sat:
-      target_table: sat_artist
+      target_table: artist_sat
       load_dt_column: load_dt
       source_column: source

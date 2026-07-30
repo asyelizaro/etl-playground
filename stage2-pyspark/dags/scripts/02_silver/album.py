@@ -5,7 +5,7 @@ from pyspark.sql.functions import col, current_timestamp, lit, sha2
 from utils import get_latest_partition_path, get_spark_session
 
 
-def load_artist(dt=None, table_config=None):
+def load_album(dt=None, table_config=None):
     spark = get_spark_session()
 
     try:
@@ -79,13 +79,12 @@ def load_satellite(df, table_config):
     sat_df = (
         df
         .withColumn(
-            # имя берём из hub.key_column в YAML.
             hub["key_column"],
             sha2(col(business_key).cast("string"), 256),
         )
         .select(
             col(hub["key_column"]),
-            col("name")
+            col("title")
         )
         .withColumn(sat["load_dt_column"], current_timestamp())
         .withColumn(sat["source_column"], lit("chinook"))

@@ -58,5 +58,23 @@ with DAG(
         },
     )
 
+    load_album = PythonOperator(
+        task_id="load_album",
+        python_callable=run_silver_table,
+        op_kwargs={
+            "table_name": "album"
+        },
+    )
+
+    load_artist_album_link = PythonOperator(
+        task_id="load_artist_album_link",
+        python_callable=run_silver_table,
+        op_kwargs={
+            "table_name": "artist_album_link"
+        },
+    )
+
+
+
 # Задаем зависимости между задачами:
-load_artist 
+[load_artist, load_album] >> load_artist_album_link

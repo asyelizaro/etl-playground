@@ -16,3 +16,21 @@ tables:
       target_table: artist_sat
       load_dt_column: load_dt
       source_column: source
+  - name: album
+    handler: album.load_album
+    source_table: album
+    database: silver
+    business_key: album_id
+    columns:
+      album_id: album_id
+      artist_id: artist_id
+      title: title
+    hub:
+      target_table: album_hub
+      key_column: album_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: album_sat
+      load_dt_column: load_dt
+      source_column: source

@@ -11,3 +11,4 @@ cd ../stage2-pyspark
 docker-compose up -d
 
 echo "Done. Open Airflow: http://localhost:8080/home"
+echo "      Open Minio:   http://localhost:9001"

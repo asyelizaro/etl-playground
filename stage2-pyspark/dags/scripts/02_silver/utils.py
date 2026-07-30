@@ -18,7 +18,16 @@ def get_spark_session():
         SparkSession.builder
         .master("local[*]")
         .appName("artist-legacy")
-        .config("spark.jars.packages", f"{iceberg_runtime},{hadoop_aws}")
+        .config(
+            "spark.jars",
+            os.getenv(
+                "SPARK_EXTRA_JARS",
+                "/opt/spark-jars/iceberg-spark-runtime-3.5_2.12-1.6.1.jar,"
+                "/opt/spark-jars/hadoop-aws-3.3.4.jar,"
+                "/opt/spark-jars/aws-java-sdk-bundle-1.12.262.jar,"
+                "/opt/spark-jars/wildfly-openssl-1.0.7.Final.jar",
+            ),
+        )
         .config("spark.sql.extensions", "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions")
         .config("spark.sql.catalog.spark_catalog", "org.apache.iceberg.spark.SparkCatalog")
         .config("spark.sql.catalog.spark_catalog.type", "hadoop")

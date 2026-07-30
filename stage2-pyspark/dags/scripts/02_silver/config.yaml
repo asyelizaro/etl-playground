@@ -16,6 +16,7 @@ tables:
       target_table: artist_sat
       load_dt_column: load_dt
       source_column: source
+
   - name: album
     handler: album.load_album
     source_table: album
@@ -32,5 +33,20 @@ tables:
       source_column: source
     sat:
       target_table: album_sat
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: artist_album_link
+    handler: artist_album_link.load_artist_album_link
+    source_table: album
+    database: silver
+    columns:
+      artist_id: artist_id
+      album_id: album_id
+    link:
+      target_table: artist_album_link
+      key_column: artist_album_hk
+      left_key_column: artist_hk
+      right_key_column: album_hk
       load_dt_column: load_dt
       source_column: source

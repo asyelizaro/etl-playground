@@ -77,4 +77,4 @@ with DAG(
 
 
 # Задаем зависимости между задачами:
-[load_artist, load_album] >> load_artist_album_link
+load_artist >> load_album >> load_artist_album_link

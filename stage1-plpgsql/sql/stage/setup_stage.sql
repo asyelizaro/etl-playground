@@ -15,8 +15,8 @@ CREATE SERVER stage0_source FOREIGN DATA WRAPPER postgres_fdw OPTIONS (
 
 -- 3. mapping
 CREATE USER MAPPING FOR CURRENT_USER SERVER stage0_source OPTIONS (
-    user 'postgres',
-    password 'postgres'
+    user '{{ conn.postgres_chinook.login }}',
+    password '{{ conn.postgres_chinook.password }}'
 );
 
 -- 4. загрузка таблиц

@@ -14,14 +14,14 @@ CHINOOK_CONFIG = {
     'host': os.getenv('POSTGRES_CHINOOK_HOST', 'postgres-stage0'),
     'port': int(os.getenv('POSTGRES_CHINOOK_PORT', 5432)),
     'database': os.getenv('POSTGRES_CHINOOK_DB', 'chinook'),
-    'user': os.getenv('POSTGRES_CHINOOK_USER', 'postgres'),
-    'password': os.getenv('POSTGRES_CHINOOK_PASSWORD', 'postgres')
+    'user': os.environ['POSTGRES_CHINOOK_USER'],
+    'password': os.environ['POSTGRES_CHINOOK_PASSWORD']
 }
 
 MINIO_CONFIG = {
     'endpoint': os.getenv('MINIO_ENDPOINT', 'http://minio:9000'),
-    'access_key': os.getenv('MINIO_ACCESS_KEY', 'minio'),
-    'secret_key': os.getenv('MINIO_SECRET_KEY', 'minio123'),
+    'access_key': os.environ['MINIO_ACCESS_KEY'],
+    'secret_key': os.environ['MINIO_SECRET_KEY'],
     'bucket': os.getenv('MINIO_BUCKET', 'chinook-lake'),  # bucket для сырых данных
     'secure': os.getenv('MINIO_SECURE', 'False').lower() == 'true'
 }

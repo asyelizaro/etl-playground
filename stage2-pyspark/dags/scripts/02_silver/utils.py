@@ -11,8 +11,8 @@ def get_spark_session():
     )
     hadoop_aws = os.getenv("HADOOP_AWS_RUNTIME", "org.apache.hadoop:hadoop-aws:3.3.4")
     minio_endpoint = os.getenv("MINIO_ENDPOINT", "http://minio:9000")
-    minio_access_key = os.getenv("MINIO_ACCESS_KEY", "minio")
-    minio_secret_key = os.getenv("MINIO_SECRET_KEY", "minio123")
+    minio_access_key = os.environ["MINIO_ACCESS_KEY"]
+    minio_secret_key = os.environ["MINIO_SECRET_KEY"]
 
     return (
         SparkSession.builder

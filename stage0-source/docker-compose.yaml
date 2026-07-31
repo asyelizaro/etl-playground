@@ -5,9 +5,9 @@ services:
     image: postgres:15
     container_name: pg-stage0
     environment:
-      POSTGRES_DB: chinook
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_CHINOOK_DB}
+      POSTGRES_USER: ${POSTGRES_CHINOOK_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_CHINOOK_PASSWORD}
     ports:
       - "5432:5432"
     volumes:

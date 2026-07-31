@@ -13,7 +13,7 @@ with DAG(
     # 1. setup stage
     setup_stage = PostgresOperator(
         task_id="init_chinook",
-        postgres_conn_id="postgres_chinook",
+        postgres_conn_id="postgres_star_model",
         sql="stage/setup_stage.sql",
     )
 

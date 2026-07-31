@@ -26,9 +26,9 @@ services:
     image: postgres:15
     container_name: postgres_airflow
     environment:
-      POSTGRES_DB: airflow_db
-      POSTGRES_USER: ${POSTGRES_AIRFLOW_USER:-airflow}
-      POSTGRES_PASSWORD: ${POSTGRES_AIRFLOW_PASSWORD:-airflow}
+      POSTGRES_DB: ${POSTGRES_AIRFLOW_DB}
+      POSTGRES_USER: ${POSTGRES_AIRFLOW_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_AIRFLOW_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
@@ -44,7 +44,7 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_AIRFLOW_USER}:${POSTGRES_AIRFLOW_PASSWORD}@postgres_airflow:5432/${POSTGRES_AIRFLOW_DB}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
@@ -53,8 +53,8 @@ services:
       POSTGRES_CHINOOK_HOST: postgres-stage0
       POSTGRES_CHINOOK_PORT: 5432
       POSTGRES_CHINOOK_DB: chinook
-      POSTGRES_CHINOOK_USER: postgres
-      POSTGRES_CHINOOK_PASSWORD: postgres
+      POSTGRES_CHINOOK_USER: ${POSTGRES_CHINOOK_USER}
+      POSTGRES_CHINOOK_PASSWORD: ${POSTGRES_CHINOOK_PASSWORD}
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
@@ -69,7 +69,8 @@ services:
       - ./plugins:/opt/airflow/plugins
     depends_on:
       - postgres_airflow
-    command: bash -c "airflow db init && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
+    command: >-
+      bash -c 'airflow db migrate && airflow users create --username "${AIRFLOW_USER}" --password "${AIRFLOW_PASS}" --firstname Admin --lastname User --role Admin --email "${AIRFLOW_EMAIL}" || true'
     restart: 'no'
     networks:
       - airflow_network
@@ -82,7 +83,7 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_AIRFLOW_USER}:${POSTGRES_AIRFLOW_PASSWORD}@postgres_airflow:5432/${POSTGRES_AIRFLOW_DB}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
@@ -93,8 +94,8 @@ services:
       POSTGRES_CHINOOK_HOST: postgres-stage0
       POSTGRES_CHINOOK_PORT: 5432
       POSTGRES_CHINOOK_DB: chinook
-      POSTGRES_CHINOOK_USER: postgres
-      POSTGRES_CHINOOK_PASSWORD: postgres
+      POSTGRES_CHINOOK_USER: ${POSTGRES_CHINOOK_USER}
+      POSTGRES_CHINOOK_PASSWORD: ${POSTGRES_CHINOOK_PASSWORD}
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
@@ -124,7 +125,7 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_AIRFLOW_USER}:${POSTGRES_AIRFLOW_PASSWORD}@postgres_airflow:5432/${POSTGRES_AIRFLOW_DB}
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
       AIRFLOW__CORE__LOAD_EXAMPLES: 'False'
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
@@ -133,8 +134,8 @@ services:
       POSTGRES_CHINOOK_HOST: postgres-stage0
       POSTGRES_CHINOOK_PORT: 5432
       POSTGRES_CHINOOK_DB: chinook
-      POSTGRES_CHINOOK_USER: postgres
-      POSTGRES_CHINOOK_PASSWORD: postgres
+      POSTGRES_CHINOOK_USER: ${POSTGRES_CHINOOK_USER}
+      POSTGRES_CHINOOK_PASSWORD: ${POSTGRES_CHINOOK_PASSWORD}
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
@@ -162,7 +163,7 @@ services:
       - .env
     environment:
       AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres_airflow:5432/airflow_db
+      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_AIRFLOW_USER}:${POSTGRES_AIRFLOW_PASSWORD}@postgres_airflow:5432/${POSTGRES_AIRFLOW_DB}
       AIRFLOW__CELERY__BROKER_URL: redis://redis:6379/0
       AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres_airflow:5432/airflow_db
       AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
@@ -172,8 +173,8 @@ services:
       POSTGRES_CHINOOK_HOST: postgres-stage0
       POSTGRES_CHINOOK_PORT: 5432
       POSTGRES_CHINOOK_DB: chinook
-      POSTGRES_CHINOOK_USER: postgres
-      POSTGRES_CHINOOK_PASSWORD: postgres
+      POSTGRES_CHINOOK_USER: ${POSTGRES_CHINOOK_USER}
+      POSTGRES_CHINOOK_PASSWORD: ${POSTGRES_CHINOOK_PASSWORD}
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
       MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}

@@ -5,11 +5,14 @@ import yaml
 
 
 def load_config():
-
     path = Path(__file__).parent / "config.yaml"
 
     with open(path, "r", encoding="utf-8") as file:
         return yaml.safe_load(file)
+
+
+def get_table_names():
+    return [table["name"] for table in load_config()["tables"]]
 
 
 def run_table(table_name, dt=None):

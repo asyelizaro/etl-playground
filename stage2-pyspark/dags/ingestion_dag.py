@@ -58,6 +58,15 @@ def run_ingestion():
     logger.info("Pipeline finished")
     logger.info(stats)
 
+    failed_tables = [
+        table for table, result in stats.items()
+        if result.get("status") != "success"
+    ]
+    if failed_tables:
+        raise RuntimeError(
+            f"Ingestion failed for tables: {', '.join(failed_tables)}"
+        )
+
 
 with DAG(
     dag_id='ingestion_dag',

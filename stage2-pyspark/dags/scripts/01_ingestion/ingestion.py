@@ -54,10 +54,22 @@ def get_chinook_engine():
 def extract_table_to_parquet(engine, table_name):
     logger.info(f'Extracting table: {table_name}')
     
-    df = pd.read_sql(f'SELECT * FROM "{table_name}"', engine)
+    connection = engine.raw_connection()
+    try:
+        df = pd.read_sql(
+            f'SELECT * FROM "{table_name}"',
+            connection,
+        )
+    finally:
+        connection.close()
 
     buffr = BytesIO()
-    df.to_parquet(buffr, index=False)
+    df.to_parquet(
+        buffr,
+        index=False,
+        coerce_timestamps="us",
+        allow_truncated_timestamps=True,
+    )
     buffr.seek(0)
 
     return buffr, df

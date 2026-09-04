@@ -1,6 +1,8 @@
 tables:
+  # --- Hubs + Satellites ---
   - name: artist
-    handler: artist.load_artist
+    handler: loader.load_hub_sat
+    depends_on: []
     source_table: artist
     database: silver
     business_key: artist_id
@@ -14,11 +16,14 @@ tables:
       source_column: source
     sat:
       target_table: artist_sat
+      attributes: [name]
+      hash_diff_column: hash_diff
       load_dt_column: load_dt
       source_column: source
 
   - name: album
-    handler: album.load_album
+    handler: loader.load_hub_sat
+    depends_on: []
     source_table: album
     database: silver
     business_key: album_id
@@ -33,11 +38,211 @@ tables:
       source_column: source
     sat:
       target_table: album_sat
+      attributes: [title]
+      hash_diff_column: hash_diff
       load_dt_column: load_dt
       source_column: source
 
+  - name: track
+    handler: loader.load_hub_sat
+    depends_on: []
+    source_table: track
+    database: silver
+    business_key: track_id
+    columns:
+      track_id: track_id
+      name: name
+      album_id: album_id
+      media_type_id: media_type_id
+      genre_id: genre_id
+      composer: composer
+      milliseconds: milliseconds
+      bytes: bytes
+      unit_price: unit_price
+    hub:
+      target_table: track_hub
+      key_column: track_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: track_sat
+      attributes: [name, composer, milliseconds, bytes, unit_price]
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: genre
+    handler: loader.load_hub_sat
+    depends_on: []
+    source_table: genre
+    database: silver
+    business_key: genre_id
+    columns:
+      genre_id: genre_id
+      name: name
+    hub:
+      target_table: genre_hub
+      key_column: genre_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: genre_sat
+      attributes: [name]
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: playlist
+    handler: loader.load_hub_sat
+    depends_on: []
+    source_table: playlist
+    database: silver
+    business_key: playlist_id
+    columns:
+      playlist_id: playlist_id
+      name: name
+    hub:
+      target_table: playlist_hub
+      key_column: playlist_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: playlist_sat
+      attributes: [name]
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: employee
+    handler: loader.load_hub_sat
+    depends_on: []
+    source_table: employee
+    database: silver
+    business_key: employee_id
+    columns:
+      employee_id: employee_id
+      last_name: last_name
+      first_name: first_name
+      title: title
+      reports_to: reports_to
+      birth_date: birth_date
+      hire_date: hire_date
+      address: address
+      city: city
+      state: state
+      country: country
+      postal_code: postal_code
+      phone: phone
+      fax: fax
+      email: email
+    hub:
+      target_table: employee_hub
+      key_column: employee_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: employee_sat
+      attributes:
+        - last_name
+        - first_name
+        - title
+        - reports_to
+        - birth_date
+        - hire_date
+        - address
+        - city
+        - state
+        - country
+        - postal_code
+        - phone
+        - fax
+        - email
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: customer
+    handler: loader.load_hub_sat
+    depends_on: []
+    source_table: customer
+    database: silver
+    business_key: customer_id
+    columns:
+      customer_id: customer_id
+      first_name: first_name
+      last_name: last_name
+      company: company
+      address: address
+      city: city
+      state: state
+      country: country
+      postal_code: postal_code
+      phone: phone
+      fax: fax
+      email: email
+      support_rep_id: support_rep_id
+    hub:
+      target_table: customer_hub
+      key_column: customer_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: customer_sat
+      attributes:
+        - first_name
+        - last_name
+        - company
+        - address
+        - city
+        - state
+        - country
+        - postal_code
+        - phone
+        - fax
+        - email
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: invoice
+    handler: loader.load_hub_sat
+    depends_on: []
+    source_table: invoice
+    database: silver
+    business_key: invoice_id
+    columns:
+      invoice_id: invoice_id
+      customer_id: customer_id
+      invoice_date: invoice_date
+      billing_address: billing_address
+      billing_city: billing_city
+      billing_state: billing_state
+      billing_country: billing_country
+      billing_postal_code: billing_postal_code
+      total: total
+    hub:
+      target_table: invoice_hub
+      key_column: invoice_hk
+      load_dt_column: load_dt
+      source_column: source
+    sat:
+      target_table: invoice_sat
+      attributes:
+        - invoice_date
+        - billing_address
+        - billing_city
+        - billing_state
+        - billing_country
+        - billing_postal_code
+        - total
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  # --- Links ---
   - name: artist_album_link
-    handler: artist_album_link.load_artist_album_link
+    handler: loader.load_link
+    depends_on: [artist, album]
     source_table: album
     database: silver
     columns:
@@ -46,7 +251,162 @@ tables:
     link:
       target_table: artist_album_link
       key_column: artist_album_hk
+      left_business_key: artist_id
+      right_business_key: album_id
       left_key_column: artist_hk
       right_key_column: album_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: album_track_link
+    handler: loader.load_link
+    depends_on: [album, track]
+    source_table: track
+    database: silver
+    columns:
+      album_id: album_id
+      track_id: track_id
+    link:
+      target_table: album_track_link
+      key_column: album_track_hk
+      left_business_key: album_id
+      right_business_key: track_id
+      left_key_column: album_hk
+      right_key_column: track_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: genre_track_link
+    handler: loader.load_link
+    depends_on: [genre, track]
+    source_table: track
+    database: silver
+    columns:
+      genre_id: genre_id
+      track_id: track_id
+    link:
+      target_table: genre_track_link
+      key_column: genre_track_hk
+      left_business_key: genre_id
+      right_business_key: track_id
+      left_key_column: genre_hk
+      right_key_column: track_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: playlist_track_link
+    handler: loader.load_link
+    depends_on: [playlist, track]
+    source_table: playlist_track
+    database: silver
+    columns:
+      playlist_id: playlist_id
+      track_id: track_id
+    link:
+      target_table: playlist_track_link
+      key_column: playlist_track_hk
+      left_business_key: playlist_id
+      right_business_key: track_id
+      left_key_column: playlist_hk
+      right_key_column: track_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: invoice_track_link
+    handler: loader.load_link
+    depends_on: [invoice, track]
+    source_table: invoice_line
+    database: silver
+    columns:
+      invoice_id: invoice_id
+      track_id: track_id
+    link:
+      target_table: invoice_track_link
+      key_column: invoice_track_hk
+      left_business_key: invoice_id
+      right_business_key: track_id
+      left_key_column: invoice_hk
+      right_key_column: track_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: employee_customer_link
+    handler: loader.load_link
+    depends_on: [employee, customer]
+    source_table: customer
+    database: silver
+    columns:
+      employee_id: support_rep_id
+      customer_id: customer_id
+    link:
+      target_table: employee_customer_link
+      key_column: employee_customer_hk
+      left_business_key: employee_id
+      right_business_key: customer_id
+      left_key_column: employee_hk
+      right_key_column: customer_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: customer_invoice_link
+    handler: loader.load_link
+    depends_on: [customer, invoice]
+    source_table: invoice
+    database: silver
+    columns:
+      customer_id: customer_id
+      invoice_id: invoice_id
+    link:
+      target_table: customer_invoice_link
+      key_column: customer_invoice_hk
+      left_business_key: customer_id
+      right_business_key: invoice_id
+      left_key_column: customer_hk
+      right_key_column: invoice_hk
+      load_dt_column: load_dt
+      source_column: source
+
+  # --- Link Satellites ---
+  - name: invoice_line_sat
+    handler: loader.load_link_sat
+    depends_on: [invoice_track_link]
+    source_table: invoice_line
+    database: silver
+    columns:
+      invoice_id: invoice_id
+      track_id: track_id
+      unit_price: unit_price
+      quantity: quantity
+    link:
+      key_column: invoice_track_hk
+      left_business_key: invoice_id
+      right_business_key: track_id
+      left_key_column: invoice_hk
+      right_key_column: track_hk
+    sat:
+      target_table: invoice_line_sat
+      attributes: [unit_price, quantity]
+      hash_diff_column: hash_diff
+      load_dt_column: load_dt
+      source_column: source
+
+  - name: playlist_track_sat
+    handler: loader.load_link_sat
+    depends_on: [playlist_track_link]
+    source_table: playlist_track
+    database: silver
+    columns:
+      playlist_id: playlist_id
+      track_id: track_id
+    link:
+      key_column: playlist_track_hk
+      left_business_key: playlist_id
+      right_business_key: track_id
+      left_key_column: playlist_hk
+      right_key_column: track_hk
+    sat:
+      target_table: playlist_track_sat
+      attributes: [relationship_payload]
+      hash_diff_column: hash_diff
       load_dt_column: load_dt
       source_column: source

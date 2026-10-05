@@ -30,6 +30,21 @@ services:
     restart: 'no'
     networks:
       - airflow_network
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.8
+    container_name: clickhouse
+    ports:
+      - "8123:8123"
+      - "9002:9000"
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DB}
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+    volumes:
+      - ./clickhouse_data:/var/lib/clickhouse
+    networks:
+      - airflow_network
+    restart: unless-stopped
 
   redis:
     image: redis:7

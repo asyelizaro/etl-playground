@@ -8,14 +8,16 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN mkdir -p /opt/spark-jars && \
-curl -fsSL https://repo.maven.apache.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.6.1/iceberg-spark-runtime-3.5_2.12-1.6.1.jar \
+    curl -fsSL https://repo.maven.apache.org/maven2/org/apache/iceberg/iceberg-spark-runtime-3.5_2.12/1.6.1/iceberg-spark-runtime-3.5_2.12-1.6.1.jar \
     -o /opt/spark-jars/iceberg-spark-runtime-3.5_2.12-1.6.1.jar && \
-curl -fsSL https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar \
+    curl -fsSL https://repo.maven.apache.org/maven2/org/apache/hadoop/hadoop-aws/3.3.4/hadoop-aws-3.3.4.jar \
     -o /opt/spark-jars/hadoop-aws-3.3.4.jar && \
-curl -fsSL https://repo.maven.apache.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar \
+    curl -fsSL https://repo.maven.apache.org/maven2/com/amazonaws/aws-java-sdk-bundle/1.12.262/aws-java-sdk-bundle-1.12.262.jar \
     -o /opt/spark-jars/aws-java-sdk-bundle-1.12.262.jar && \
-curl -fsSL https://repo.maven.apache.org/maven2/org/wildfly/openssl/wildfly-openssl/1.0.7.Final/wildfly-openssl-1.0.7.Final.jar \
-    -o /opt/spark-jars/wildfly-openssl-1.0.7.Final.jar
+    curl -fsSL https://repo.maven.apache.org/maven2/org/wildfly/openssl/wildfly-openssl/1.0.7.Final/wildfly-openssl-1.0.7.Final.jar \
+    -o /opt/spark-jars/wildfly-openssl-1.0.7.Final.jar && \
+    curl -fsSL https://repo1.maven.org/maven2/com/clickhouse/clickhouse-jdbc/0.6.1/clickhouse-jdbc-0.6.1-shaded.jar \
+    -o /opt/spark-jars/clickhouse-jdbc-0.6.1-shaded.jar
 
 USER airflow
 

@@ -17,17 +17,20 @@ from engine import load_config, run_table
 def run_silver_table(table_name, **context):
     return run_table(table_name, dt=context.get("ds"))
 
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=2)
+}
+
 
 with DAG(
     dag_id="silver_load",
     start_date=datetime(2026, 7, 1),
     schedule_interval=None,
     catchup=False,
-    default_args={
-        "owner": "airflow",
-        "retries": 0,
-        "retry_delay": timedelta(minutes=1),
-    },
+    default_args=default_args,
     tags=["stage2", "silver"],
     description="Config-driven Data Vault Silver loader",
 ) as dag:
@@ -46,3 +49,10 @@ with DAG(
         downstream_task = tasks[table_config["name"]]
         for upstream_name in table_config.get("depends_on", []):
             tasks[upstream_name] >> downstream_task
+
+
+    trigger_silver = TriggerDagRunOperator(
+        task_id='trigger_gold_load',
+        trigger_dag_id='gold_load',
+        wait_for_completion=False,
+    )

@@ -31,5 +31,4 @@ with DAG(
     build_artist_sales = PythonOperator(
         task_id="build_sales_by_artist",
         python_callable=build_sales_by_artist,
-        op_kwargs={"dt": "{{ ds }}"},
     )

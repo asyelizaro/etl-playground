@@ -3,7 +3,7 @@ import os
 from pyspark.sql import SparkSession, functions as F
 
 
-def get_spark_session(app_name: str = "gold-artist-sales"):
+def get_spark_session():
     extra_jars = os.getenv("SPARK_EXTRA_JARS", "")
     default_jars = [
         "/opt/spark-jars/iceberg-spark-runtime-3.5_2.12-1.6.1.jar",
@@ -19,7 +19,7 @@ def get_spark_session(app_name: str = "gold-artist-sales"):
     return (
         SparkSession.builder
         .master("local[*]")
-        .appName(app_name)
+        .appName("gold-artist-sales")
         .config("spark.jars", merged_jars)
         .config(
             "spark.sql.extensions",
@@ -65,30 +65,26 @@ def _spark_to_clickhouse(df, table_name: str):
     )
 
 
-def build_sales_by_artist(dt=None, **kwargs):
-    spark = get_spark_session(app_name="gold-sales-by-artist")
+def build_sales_by_artist():
+    spark = get_spark_session()
     try:
         invoice_sat = spark.table("silver.invoice_sat")
         invoice_track_link = spark.table("silver.invoice_track_link")
-        track_hub = spark.table("silver.track_hub")
-        track_sat = spark.table("silver.track_sat")
         album_track_link = spark.table("silver.album_track_link")
         artist_album_link = spark.table("silver.artist_album_link")
-        artist_hub = spark.table("silver.artist_hub")
         artist_sat = spark.table("silver.artist_sat")
         genre_track_link = spark.table("silver.genre_track_link")
-        genre_hub = spark.table("silver.genre_hub")
         genre_sat = spark.table("silver.genre_sat")
 
         invoice_sat_df = invoice_sat.select(
-            F.col("invoice_hk").alias("invoice_hk"),
-            F.col("invoice_date").alias("invoice_date"),
+            F.col("invoice_hk"),
+            F.col("invoice_date"),
             F.col("total").cast("decimal(12,2)").alias("total"),
         )
 
         invoice_line = spark.table("silver.invoice_line_sat")
         invoice_line_df = invoice_line.select(
-            F.col("invoice_track_hk").alias("invoice_track_hk"),
+            F.col("invoice_track_hk"),
             F.col("unit_price").cast("decimal(12,2)").alias("unit_price"),
             F.col("quantity").cast("long").alias("quantity"),
         )
@@ -111,22 +107,6 @@ def build_sales_by_artist(dt=None, **kwargs):
                 how="left",
             )
             .join(
-                track_hub.select(F.col("track_hk"), F.col("track_id").alias("track_id")),
-                on="track_hk",
-                how="left",
-            )
-            .join(
-                track_sat.select(
-                    F.col("track_hk"),
-                    F.col("name").alias("track_name"),
-                    F.col("unit_price").cast("decimal(12,2)").alias("track_unit_price"),
-                    F.col("milliseconds").alias("milliseconds"),
-                    F.col("bytes").alias("bytes"),
-                ),
-                on="track_hk",
-                how="left",
-            )
-            .join(
                 album_track_link.select(F.col("album_hk"), F.col("track_hk")),
                 on="track_hk",
                 how="left",
@@ -134,11 +114,6 @@ def build_sales_by_artist(dt=None, **kwargs):
             .join(
                 artist_album_link.select(F.col("artist_hk"), F.col("album_hk")),
                 on="album_hk",
-                how="left",
-            )
-            .join(
-                artist_hub.select(F.col("artist_hk"), F.col("artist_id").alias("artist_id")),
-                on="artist_hk",
                 how="left",
             )
             .join(
@@ -152,11 +127,6 @@ def build_sales_by_artist(dt=None, **kwargs):
             .join(
                 genre_track_link.select(F.col("genre_hk"), F.col("track_hk")),
                 on="track_hk",
-                how="left",
-            )
-            .join(
-                genre_hub.select(F.col("genre_hk"), F.col("genre_id").alias("genre_id")),
-                on="genre_hk",
                 how="left",
             )
             .join(
@@ -179,8 +149,8 @@ def build_sales_by_artist(dt=None, **kwargs):
                 F.col("invoice_date"),
                 F.col("artist_name"),
                 F.col("genre_name"),
-                F.col("revenue").alias("revenue"),
-                F.col("quantity").alias("quantity"),
+                F.col("revenue"),
+                F.col("quantity"),
                 F.col("unit_price").alias("avg_price_track"),
             )
         )
@@ -193,7 +163,6 @@ def build_sales_by_artist(dt=None, **kwargs):
                 F.sum("revenue").cast("decimal(12,2)").alias("revenue"),
                 F.sum("quantity").cast("long").alias("quantity"),
             )
-            .orderBy("invoice_date", "artist_name", "genre_name")
         )
 
         _spark_to_clickhouse(artist_sales, "dm_sales_by_artist")

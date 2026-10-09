@@ -3,7 +3,7 @@ import os
 from pyspark.sql import SparkSession, functions as F
 
 
-def get_spark_session(app_name: str = "gold-artist-sales"):
+def get_spark_session():
     extra_jars = os.getenv("SPARK_EXTRA_JARS", "")
     default_jars = [
         "/opt/spark-jars/iceberg-spark-runtime-3.5_2.12-1.6.1.jar",
@@ -19,7 +19,7 @@ def get_spark_session(app_name: str = "gold-artist-sales"):
     return (
         SparkSession.builder
         .master("local[*]")
-        .appName(app_name)
+        .appName("gold-artist-sales")
         .config("spark.jars", merged_jars)
         .config(
             "spark.sql.extensions",

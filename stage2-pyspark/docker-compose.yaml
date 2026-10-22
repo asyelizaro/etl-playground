@@ -42,6 +42,7 @@ services:
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     volumes:
       - ./clickhouse_data:/var/lib/clickhouse
+      - ./clickhouse/gold_table.sql:/docker-entrypoint-initdb.d/001-gold-tables.sql:ro
     networks:
       - airflow_network
     restart: unless-stopped

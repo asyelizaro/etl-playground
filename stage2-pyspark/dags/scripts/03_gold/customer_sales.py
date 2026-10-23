@@ -116,7 +116,5 @@ def build_customer_sales():
 
 
         spark_to_clickhouse(customer_sales, "dm_customer_sales")
-
-        return customer_sales
     finally:
         spark.stop()

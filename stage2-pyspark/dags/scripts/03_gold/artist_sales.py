@@ -100,7 +100,5 @@ def build_sales_by_artist():
         )
 
         spark_to_clickhouse(artist_sales, "dm_sales_by_artist")
-
-        return artist_sales
     finally:
         spark.stop()

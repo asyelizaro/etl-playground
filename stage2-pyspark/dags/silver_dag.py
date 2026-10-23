@@ -4,6 +4,7 @@ import sys
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 
 sys.path.insert(
@@ -51,8 +52,9 @@ with DAG(
             tasks[upstream_name] >> downstream_task
 
 
-    trigger_silver = TriggerDagRunOperator(
+    trigger_gold = TriggerDagRunOperator(
         task_id='trigger_gold_load',
         trigger_dag_id='gold_load',
         wait_for_completion=False,
     )
+    list(tasks.values()) >> trigger_gold

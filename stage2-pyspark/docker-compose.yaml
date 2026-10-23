@@ -41,7 +41,7 @@ services:
       CLICKHOUSE_USER: ${CLICKHOUSE_USER}
       CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
     volumes:
-      - ./clickhouse_data:/var/lib/clickhouse
+      - clickhouse_data:/var/lib/clickhouse
       - ./clickhouse/gold_table.sql:/docker-entrypoint-initdb.d/001-gold-tables.sql:ro
     networks:
       - airflow_network
@@ -241,3 +241,6 @@ networks:
     driver: bridge
     external: true
     name: stage0-source_airflow_network
+
+volumes:
+  clickhouse_data:

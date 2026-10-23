@@ -28,4 +28,4 @@ CREATE TABLE IF NOT EXISTS chinook_gold.dm_sales_by_artist (
     revenue Nullable(Decimal(12, 2)),
     quantity Int64
 ) ENGINE = MergeTree
-ORDER BY (invoice_date, artist_name, genre_name);
+ORDER BY (invoice_date, artist_name, ifNull(genre_name, ''));

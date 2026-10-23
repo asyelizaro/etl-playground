@@ -54,7 +54,7 @@ def spark_to_clickhouse(df, table_name: str):
 
     (
         df.write.format("jdbc")
-        .mode("overwrite")
+        .mode("append")
         .option("url", jdbc_url)
         .option("dbtable", table_name)
         .option("driver", "com.clickhouse.jdbc.ClickHouseDriver")

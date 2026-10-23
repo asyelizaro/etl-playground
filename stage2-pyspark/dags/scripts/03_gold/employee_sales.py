@@ -125,7 +125,5 @@ def build_sales_by_employee():
         )
 
         spark_to_clickhouse(sales_by_employee, "dm_sales_by_employee")
-
-        return sales_by_employee
     finally:
         spark.stop()

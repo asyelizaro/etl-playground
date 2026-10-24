@@ -1,225 +1,260 @@
-----------------
-Data Vault 2.0 schema for Chinook database
-----------------
-source_table:
+Data Vault 2.0 - approximate model for the Chinook source
+========================================================
 
-artist
-genre
-playlist
-album
-employee
-track
-customer
-invoice
-invoice_line
-playlist_track
+artist_hub
+  artist_hk
+  artist_id                         -- artist.ArtistId
+  load_dt
+  source
 
-----------------
-HUB:
+album_hub
+  album_hk
+  album_id                          -- album.AlbumId
+  load_dt
+  source
 
-HUB_artist
-HK_Artist
-ArtistId
-LoadDate
-RecordSource
+track_hub
+  track_hk
+  track_id                          -- track.TrackId
+  load_dt
+  source
 
-HUB_album
-HK_Album
-AlbumId
-LoadDate
-RecordSource
+genre_hub
+  genre_hk
+  genre_id                          -- genre.GenreId
+  load_dt
+  source
 
-HUB_track
-HK_Track
-TrackId
-LoadDate
-RecordSource
+playlist_hub
+  playlist_hk
+  playlist_id                       -- playlist.PlaylistId
+  load_dt
+  source
 
-HUB_genre
-HK_Genre
-GenreId
-LoadDate
-RecordSource
+employee_hub
+  employee_hk
+  employee_id                       -- employee.EmployeeId
+  load_dt
+  source
 
-HUB_playlist
-HK_Playlist
-PlaylistId
-LoadDate
-RecordSource
+customer_hub
+  customer_hk
+  customer_id                       -- customer.CustomerId
+  load_dt
+  source
 
-HUB_employee
-HK_Employee
-EmployeeId
-LoadDate
-RecordSource
+invoice_hub
+  invoice_hk
+  invoice_id                        -- invoice.InvoiceId
+  load_dt
+  source
 
-HUB_customer
-HK_Customer
-CustomerId
-LoadDate
-RecordSource
 
-HUB_invoice
-HK_Invoice
-InvoiceId
-LoadDate
-RecordSource
+LINKS - relationships between business concepts
+-----------------------------------------------
 
-----------------
-LINKS:
+artist_album_link                   source: album.ArtistId
+  artist_album_hk
+  artist_hk
+  album_hk
+  load_dt
+  source
 
-LINK_Artist_Album
-HK_Artist_Album
-HK_Artist
-HK_Album
-LoadDate
-RecordSource
+album_track_link                    source: track.AlbumId
+  album_track_hk
+  album_hk
+  track_hk
+  load_dt
+  source
 
-LINK_Album_Track
-HK_Album_Track
-HK_Album
-HK_Track
-LoadDate
-RecordSource
+genre_track_link                    source: track.GenreId
+  genre_track_hk
+  genre_hk
+  track_hk
+  load_dt
+  source
 
-LINK_Genre_Track
-HK_Genre_Track
-HK_Genre
-HK_Track
-LoadDate
-RecordSource
+playlist_track_link                 source: playlist_track
+  playlist_track_hk                 -- hash of PlaylistId + TrackId
+  playlist_hk
+  track_hk
+  load_dt
+  source
 
-LINK_Playlist_Track
-HK_Playlist_Track
-HK_Playlist
-HK_Track
-LoadDate
-RecordSource
+invoice_track_link                  source: invoice_line
+  invoice_track_hk                  -- current model hashes InvoiceId + TrackId
+  invoice_hk
+  track_hk
+  load_dt
+  source
 
-LINK_Invoice_Track
-HK_Invoice_Track
-HK_Invoice
-HK_Track
-LoadDate
-RecordSource
+customer_invoice_link               source: invoice.CustomerId
+  customer_invoice_hk
+  customer_hk
+  invoice_hk
+  load_dt
+  source
 
-LINK_Employee_Customer
-HK_Employee_Customer
-HK_Employee
-HK_Customer
-LoadDate
-RecordSource
+employee_customer_link              source: customer.SupportRepId
+  employee_customer_hk
+  employee_hk
+  customer_hk
+  load_dt
+  source
 
-LINK_Customer_Invoice
-HK_Customer_Invoice
-HK_Customer
-HK_Invoice
-LoadDate
-RecordSource
 
-----------------
-SAT:
+SATELLITES - descriptive and changing attributes
+------------------------------------------------
 
-SAT_artist
-HK_Artist
-Name
-LoadDate
-HashDiff
-RecordSource
+artist_sat                           parent: artist_hub
+  artist_hk
+  name
+  load_dt
+  hash_diff
+  source
 
-SAT_album
-HK_Album
-Title
-LoadDate
-HashDiff
-RecordSource
+album_sat                            parent: album_hub
+  album_hk
+  title
+  load_dt
+  hash_diff
+  source
 
-SAT_track
-HK_Track
-Name
-Composer
-Milliseconds
-Bytes
-UnitPrice
-LoadDate
-HashDiff
-RecordSource
+track_sat                            parent: track_hub
+  track_hk
+  name
+  composer
+  milliseconds
+  bytes
+  unit_price
+  load_dt
+  hash_diff
+  source
 
-SAT_genre
-HK_Genre
-Name
-LoadDate
-HashDiff
-RecordSource
+genre_sat                            parent: genre_hub
+  genre_hk
+  name
+  load_dt
+  hash_diff
+  source
 
-SAT_playlist
-HK_Playlist
-Name
-LoadDate
-HashDiff
-RecordSource
+playlist_sat                         parent: playlist_hub
+  playlist_hk
+  name
+  load_dt
+  hash_diff
+  source
 
-SAT_employee
-HK_Employee
-LastName
-FirstName
-Title
-ReportsTo
-BirthDate
-HireDate
-Address
-City
-State
-Country
-PostalCode
-Phone
-Fax
-Email
-LoadDate
-HashDiff
-RecordSource
+employee_sat                         parent: employee_hub
+  employee_hk
+  last_name
+  first_name
+  title
+  reports_to
+  birth_date
+  hire_date
+  address
+  city
+  state
+  country
+  postal_code
+  phone
+  fax
+  email
+  load_dt
+  hash_diff
+  source
 
-SAT_customer
-HK_Customer
-FirstName
-LastName
-Company
-Address
-City
-State
-Country
-PostalCode
-Phone
-Fax
-Email
-LoadDate
-HashDiff
-RecordSource
+customer_sat                         parent: customer_hub
+  customer_hk
+  first_name
+  last_name
+  company
+  address
+  city
+  state
+  country
+  postal_code
+  phone
+  fax
+  email
+  load_dt
+  hash_diff
+  source
 
-SAT_invoice
-HK_Invoice
-InvoiceDate
-BillingAddress
-BillingCity
-BillingState
-BillingCountry
-BillingPostalCode
-Total
-LoadDate
-HashDiff
-RecordSource
+invoice_sat                          parent: invoice_hub
+  invoice_hk
+  invoice_date
+  billing_address
+  billing_city
+  billing_state
+  billing_country
+  billing_postal_code
+  total
+  load_dt
+  hash_diff
+  source
 
-SAT_invoice_line
-HK_Invoice_Track
-UnitPrice
-Quantity
-LoadDate
-HashDiff
-RecordSource
+invoice_line_sat                     parent: invoice_track_link
+  invoice_track_hk
+  unit_price
+  quantity
+  load_dt
+  hash_diff
+  source
 
-SAT_playlist_track
-HK_Playlist_Track
-RelationshipPayload
-LoadDate
-HashDiff
-RecordSource
+
+RELATIONSHIP OVERVIEW
+---------------------
+
+artist --< album --< track >-- genre
+                       |
+                       +---< playlist_track_link >--- playlist
+                       |
+                       +---< invoice_track_link >--- invoice -- customer
+                                                               |
+employee -------------------------------------------------------+
+         (customer.SupportRepId)
+
+The invoice-to-customer relationship is customer_invoice_link. The diagram
+shows the same relationship in a readable direction.
+
+Example path for sales by artist:
+  invoice_hub
+    -> invoice_track_link + invoice_line_sat (line price and quantity)
+    -> track_hub
+    -> album_track_link
+    -> album_hub
+    -> artist_album_link
+    -> artist_hub + artist_sat
+
+Track genre is reached through genre_track_link and genre_sat.
+
+
+NOTES / MODELLING DECISIONS
+---------------------------
+
+1. invoice_line is currently represented as a LINK between invoice and track,
+   with unit_price and quantity in its LINK SAT. This matches the Silver
+   configuration and current Gold joins. The source also has InvoiceLineId:
+   if the same track can occur more than once on one invoice, InvoiceId + TrackId
+   is not a unique line key. In that case, add an invoice_line_hub keyed by
+   InvoiceLineId and link it to invoice_hub and track_hub, or include
+   InvoiceLineId in the line-level relationship key.
+
+2. employee.reports_to is a self-reference. For full relationship history,
+   model it as employee_manager_link (employee_hk, manager_employee_hk);
+   currently it is kept as an attribute in employee_sat.
+
+3. track.MediaTypeId is present in the source, but media_type is not in the
+   current ingestion table list. Add media_type_hub, media_type_sat, and a
+   media_type_track_link only if that source table is added to ingestion.
+
+4. playlist_track has only the two relationship keys in this source. A separate
+   playlist_track_sat is unnecessary unless the source gains descriptive
+   attributes for that relationship.
+
+5. CustomerId is carried by invoice as well as represented in
+   customer_invoice_link. This is intentional in the current Silver setup; the
+   LINK is the canonical relationship for joins, while source foreign keys
+   provide the relationship input.

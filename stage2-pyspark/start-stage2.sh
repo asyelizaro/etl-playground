@@ -8,7 +8,7 @@ docker-compose up -d
 
 echo "Starting stage2-pyspark"
 cd ../stage2-pyspark
-docker-compose up -d
+docker-compose up -d --build
 
 echo "Done. Open Airflow: http://localhost:8080/home"
 echo "      Open Minio:   http://localhost:9001"

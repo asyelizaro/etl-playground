@@ -16,7 +16,7 @@ BEGIN
     )
     SELECT
         fct.invoice_date,
-        fct.artist_id,
+        a.name AS artist_name,
         g.name AS genre_name,
         AVG(fct.unit_price) AS avg_price_track,
         SUM(fct.total_amount) AS revenue,

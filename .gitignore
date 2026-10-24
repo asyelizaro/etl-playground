@@ -18,6 +18,7 @@ venv/
 *.log
 *.logs
 **/postgres_data_airflow/
+**/clickhouse_data/
 
 # IDE
 .vscode/

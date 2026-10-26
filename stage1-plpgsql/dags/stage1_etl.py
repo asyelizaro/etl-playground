@@ -13,7 +13,7 @@ with DAG(
 ) as dag:
     
     # 1. Setup stage - подготовка таблицы stage
-    with TaskGroup("stage_layer", tooltip="Создание foreign таблиц") as stage_layer:
+    with TaskGroup("stage_layer", tooltip="Создание внешних таблиц") as stage_layer:
         setup_stage = PostgresOperator(
             task_id="setup_stage",
             postgres_conn_id="postgres_star_model",

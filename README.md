@@ -1,7 +1,7 @@
 # etl-playground
 
 Практический проект для сравнения подходов к обработке данных на примере базы Chinook.
-
+Chinook -  БД вымышленного магазина цифровой музыки.
 ## Этапы
 
 - **stage0-source** — исходная база Chinook в PostgreSQL.
@@ -45,7 +45,7 @@ cp stage0-source/.env.example stage0-source/.env
 cp stage1-plpgsql/.env.example stage1-plpgsql/.env
 ```
 
-`POSTGRES_CHINOOK_USER` и `POSTGRES_CHINOOK_PASSWORD` в обоих файлах должны совпадать. Запустите сервисы из каталога `stage1-plpgsql`:
+`POSTGRES_CHINOOK_USER` и `POSTGRES_CHINOOK_PASSWORD` в обоих файлах должны совпадать. Запустите сервисы из директории `stage1-plpgsql`:
 
 ```bash
 cd stage1-plpgsql
@@ -54,7 +54,7 @@ bash start-stage1.sh
 
 После запуска откройте Airflow: http://localhost:8080/home. DAG `stage1-plpgsql` запускает обработку слоёв stage, DDS и DM.
 
-Для остановки выполните из того же каталога:
+Для остановки выполните команду из той же директории:
 
 ```bash
 bash stop-stage1.sh
@@ -69,25 +69,25 @@ cp stage0-source/.env.example stage0-source/.env
 cp stage2-pyspark/.env.example stage2-pyspark/.env
 ```
 
-`POSTGRES_CHINOOK_USER` и `POSTGRES_CHINOOK_PASSWORD` в обоих файлах должны совпадать. Запустите сервисы из каталога `stage2-pyspark`:
+`POSTGRES_CHINOOK_USER` и `POSTGRES_CHINOOK_PASSWORD` в обоих файлах должны совпадать. Запустите сервисы из директории `stage2-pyspark`:
 
 ```bash
 cd stage2-pyspark
 bash start-stage2.sh
 ```
 
-В Airflow вручную запустите DAG `ingestion_dag`. Он выгружает таблицы Chinook в MinIO и запускает `silver_load`; после загрузки Silver запускается `gold_load`.
+В Airflow вручную запустите DAG `ingestion_dag`. Он выгружает таблицы Chinook в MinIO и запускает `silver_load`, после загрузки Silver запускается `gold_load`.
 
 - Airflow: http://localhost:8080/home
 - MinIO Console: http://localhost:9001
 
-Для остановки выполните из каталога `stage2-pyspark`:
+Для остановки выполните команду из директории `stage2-pyspark`:
 
 ```bash
 bash stop-stage2.sh
 ```
 
-Файлы Bronze хранятся в бакете `chinook-lake` по таблицам и датам:
+Файлы Bronze хранятся в бакете `chinook-lake` по слоям, таблицам и датам:
 
 ```text
 chinook-lake/
